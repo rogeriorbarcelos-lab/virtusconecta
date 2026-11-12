@@ -611,11 +611,14 @@ class _DesktopHomePageState extends State<DesktopHomePage>
                   gradient: LinearGradient(
                 begin: Alignment.centerLeft,
                 end: Alignment.centerRight,
+                // VirtusConecta: cartao de aviso em grafite com fio dourado.
                 colors: [
-                  Color.fromARGB(255, 226, 66, 188),
-                  Color.fromARGB(255, 244, 114, 124),
+                  Color(0xFF2B2410),
+                  Color(0xFF1A1A1A),
                 ],
-              )),
+              ),
+                  border: Border(
+                      top: BorderSide(color: Color(0xFFC9A227), width: 2))),
               padding: EdgeInsets.all(20),
               child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -653,8 +656,8 @@ class _DesktopHomePageState extends State<DesktopHomePage>
                                       padding: 8,
                                       isOutline: true,
                                       text: translate(btnText),
-                                      textColor: Colors.white,
-                                      borderColor: Colors.white,
+                                      textColor: Color(0xFFE8C766),
+                                      borderColor: Color(0xFFC9A227),
                                       textSize: 20,
                                       radius: 10,
                                       onTap: onPressed,
