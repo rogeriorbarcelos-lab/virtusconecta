@@ -1308,7 +1308,8 @@ fn get_api_server_(api: String, custom: String) -> String {
             return format!("http://{}", s);
         }
     }
-    "https://admin.rustdesk.com".to_owned()
+    // VirtusConecta: a API propria (Fase 3) fica no mesmo endereco do servidor.
+    "https://conecta.virtusassessoria.com.br".to_owned()
 }
 
 #[inline]
@@ -2506,7 +2507,25 @@ pub fn rustdesk_interval(i: Interval) -> ThrottledInterval {
     ThrottledInterval::new(i)
 }
 
+/// VirtusConecta: opcoes embutidas no programa (nao dependem de arquivo externo).
+/// - idioma fixo em portugues do Brasil;
+/// - tema escuro (preto e dourado);
+/// - sem o rodape "Desenvolvido por RustDesk" na tela inicial (o aviso de
+///   licenca e o link do codigo-fonte ficam na tela Sobre).
+pub fn apply_virtus_defaults() {
+    {
+        let mut local = config::OVERWRITE_LOCAL_SETTINGS.write().unwrap();
+        local.insert(keys::OPTION_LANGUAGE.to_owned(), "pt-br".to_owned());
+        local.insert("theme".to_owned(), "dark".to_owned());
+    }
+    config::BUILTIN_SETTINGS
+        .write()
+        .unwrap()
+        .insert("hide-powered-by-me".to_owned(), "Y".to_owned());
+}
+
 pub fn load_custom_client() {
+    apply_virtus_defaults();
     #[cfg(debug_assertions)]
     if let Ok(data) = std::fs::read_to_string("./custom.txt") {
         read_custom_client(data.trim());

@@ -2615,24 +2615,23 @@ class _AboutState extends State<_About> {
               SelectionArea(
                   child: Text('${translate('ID')}: $myId')
                       .marginSymmetric(vertical: 4.0)),
+              // VirtusConecta: programa derivado do RustDesk (licenca AGPL-3.0).
+              // O aviso de direitos autorais original e mantido logo abaixo e o
+              // codigo-fonte modificado fica publico no endereco indicado.
               InkWell(
                   onTap: () {
-                    launchUrlString('https://rustdesk.com/privacy.html');
+                    launchUrlString(
+                        'https://github.com/rogeriorbarcelos-lab/virtusconecta');
                   },
                   child: Text(
-                    translate('Privacy Statement'),
+                    'Código-fonte (licença AGPL-3.0)',
                     style: linkStyle,
                   ).marginSymmetric(vertical: 4.0)),
-              InkWell(
-                  onTap: () {
-                    launchUrlString('https://rustdesk.com');
-                  },
-                  child: Text(
-                    translate('Website'),
-                    style: linkStyle,
-                  ).marginSymmetric(vertical: 4.0)),
+              Text('VirtusConecta é um programa da Virtus Assessoria Contábil, '
+                      'baseado no RustDesk (software livre).')
+                  .marginSymmetric(vertical: 4.0),
               Container(
-                decoration: const BoxDecoration(color: Color(0xFF2c8cff)),
+                decoration: const BoxDecoration(color: Color(0xFF1A1A1A)),
                 padding:
                     const EdgeInsets.symmetric(vertical: 24, horizontal: 8),
                 child: SelectionArea(
@@ -2646,12 +2645,6 @@ class _AboutState extends State<_About> {
                             'Copyright © ${DateTime.now().toString().substring(0, 4)} Purslane Tech Pte. Ltd.\n$license',
                             style: const TextStyle(color: Colors.white),
                           ),
-                          Text(
-                            translate('Slogan_tip'),
-                            style: TextStyle(
-                                fontWeight: FontWeight.w800,
-                                color: Colors.white),
-                          )
                         ],
                       ),
                     ),
