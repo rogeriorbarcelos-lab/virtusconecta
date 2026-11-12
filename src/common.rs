@@ -2523,6 +2523,15 @@ pub fn apply_virtus_defaults() {
         .write()
         .unwrap()
         .insert("hide-powered-by-me".to_owned(), "Y".to_owned());
+    // Padroes de exibicao (o usuario pode mudar no menu da sessao ou em Configuracoes > Exibicao):
+    // a tela remota e ampliada ou reduzida para caber na janela, em vez de aparecer em
+    // tamanho real (pequena num monitor grande), com a melhor qualidade de imagem,
+    // para o texto continuar legivel depois de ampliado.
+    {
+        let mut display = config::DEFAULT_DISPLAY_SETTINGS.write().unwrap();
+        display.insert(keys::OPTION_VIEW_STYLE.to_owned(), "adaptive".to_owned());
+        display.insert(keys::OPTION_IMAGE_QUALITY.to_owned(), "best".to_owned());
+    }
 }
 
 pub fn load_custom_client() {
