@@ -1970,7 +1970,6 @@ impl<T: InvokeUiSession> Session<T> {
     }
 }
 
-#[tokio::main(flavor = "current_thread")]
 fn virtus_servidor_proprio() -> bool {
     let s = Config::get_option("custom-rendezvous-server");
     s.is_empty()
@@ -1979,6 +1978,7 @@ fn virtus_servidor_proprio() -> bool {
             .any(|h| s == *h || s.starts_with(&format!("{h}:")))
 }
 
+#[tokio::main(flavor = "current_thread")]
 pub async fn io_loop<T: InvokeUiSession>(handler: Session<T>, round: u32) {
     #[cfg(any(target_os = "android", target_os = "ios"))]
     let (sender, receiver) = mpsc::unbounded_channel::<Data>();
