@@ -1055,7 +1055,7 @@ class _MenuEntryButtonItemState<T>
 }
 
 class CustomPopupMenuTheme {
-  static const Color commonColor = MyTheme.accent;
+  static Color get commonColor => MyTheme.accent;
   // kMinInteractiveDimension
   static const double height = 20.0;
   static const double dividerHeight = 3.0;

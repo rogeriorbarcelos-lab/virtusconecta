@@ -1465,7 +1465,7 @@ class TabbarTheme extends ThemeExtension<TabbarTheme> {
       required this.closeHoverColor,
       required this.selectedTabBackgroundColor});
 
-  static const light = TabbarTheme(
+  static TabbarTheme get light => TabbarTheme(
       selectedTabIconColor: MyTheme.accent,
       unSelectedTabIconColor: Color.fromARGB(255, 162, 203, 241),
       selectedTextColor: Colors.black,
@@ -1477,7 +1477,7 @@ class TabbarTheme extends ThemeExtension<TabbarTheme> {
       closeHoverColor: Colors.white,
       selectedTabBackgroundColor: Colors.white54);
 
-  static const dark = TabbarTheme(
+  static TabbarTheme get dark => TabbarTheme(
       selectedTabIconColor: MyTheme.accent,
       unSelectedTabIconColor: Color.fromARGB(255, 110, 89, 21),
       selectedTextColor: Colors.white,

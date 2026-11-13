@@ -11,6 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_hbb/common/formatter/id_formatter.dart';
 import 'package:flutter_hbb/desktop/widgets/refresh_wrapper.dart';
 import 'package:flutter_hbb/desktop/widgets/tabbar_widget.dart';
+import 'package:flutter_hbb/desktop/widgets/virtus_aparencia.dart';
 import 'package:flutter_hbb/main.dart';
 import 'package:flutter_hbb/models/peer_model.dart';
 import 'package:flutter_hbb/models/peer_tab_model.dart';
@@ -249,17 +250,97 @@ class MyTheme {
   MyTheme._();
 
   static const Color grayBg = Color(0xFFEFEFF2);
-  static const Color accent = Color(0xFFC9A227); // dourado Virtus
-  static const Color accent50 = Color(0x77C9A227);
-  static const Color accent80 = Color(0xAAC9A227);
+  // VirtusConecta: o dourado e o padrao; no tema "Personalizado" estas cores
+  // passam a ser as escolhidas pelo usuario (ver carregarCores).
+  static const Color virtusDourado = Color(0xFFC9A227);
+  static const Color virtusDouradoClaro = Color(0xFFE8C766);
+  static const Color virtusFundoPadrao = Color(0xFF0E0E0E);
+  static Color accent = virtusDourado;
+  static Color accent50 = virtusDourado.withAlpha(0x77);
+  static Color accent80 = virtusDourado.withAlpha(0xAA);
   static const Color canvasColor = Color(0xFF212121);
   static const Color border = Color(0xFFCCCCCC);
-  static const Color idColor = Color(0xFFE8C766); // dourado claro
+  static Color idColor = virtusDouradoClaro;
   static const Color darkGray = Color.fromARGB(255, 148, 148, 148);
   static const Color cmIdColor = Color(0xFF21790B);
   static const Color dark = Colors.black87;
-  static const Color button = Color(0xFFC9A227);
+  static Color button = virtusDourado;
   static const Color hoverBorder = Color(0xFF999999);
+
+  static const String temaPersonalizado = 'custom';
+
+  static bool isTemaPersonalizado() {
+    try {
+      return bind.mainGetLocalOption(key: kCommConfKeyTheme) ==
+          temaPersonalizado;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  static Color corFundoPersonalizada() =>
+      corDaOpcao(kOpcaoCorFundo, virtusFundoPadrao);
+
+  static void carregarCores() {
+    final a = isTemaPersonalizado()
+        ? corDaOpcao(kOpcaoCorDestaque, virtusDourado)
+        : virtusDourado;
+    accent = a;
+    accent50 = a.withAlpha(0x77);
+    accent80 = a.withAlpha(0xAA);
+    button = a;
+    idColor = a == virtusDourado
+        ? virtusDouradoClaro
+        : Color.lerp(a, Colors.white, 0.3)!;
+  }
+
+  static ThemeData _comFundoPersonalizado(ThemeData base) {
+    final fundo = corFundoPersonalizada();
+    final escuro = base.brightness == Brightness.dark;
+    final cartao = Color.lerp(
+        fundo, escuro ? Colors.white : Colors.black, escuro ? 0.07 : 0.05)!;
+    return base.copyWith(
+      scaffoldBackgroundColor: fundo,
+      dialogBackgroundColor: fundo,
+      cardColor: cartao,
+      colorScheme: base.colorScheme.copyWith(background: cartao),
+      inputDecorationTheme:
+          base.inputDecorationTheme.copyWith(fillColor: cartao),
+    );
+  }
+
+  static ThemeData get lightTheme {
+    carregarCores();
+    final base = _lightThemeVirtus();
+    return isTemaPersonalizado() ? _comFundoPersonalizado(base) : base;
+  }
+
+  static ThemeData get darkTheme {
+    carregarCores();
+    final base = _darkThemeVirtus();
+    return isTemaPersonalizado() ? _comFundoPersonalizado(base) : base;
+  }
+
+  /// Troca entre "dark" (Padrao Virtus), "light" (Claro) e "custom" (Personalizado).
+  static Future<void> mudarTema(String valor) async {
+    if (valor == temaPersonalizado) {
+      await bind.mainSetLocalOption(key: kCommConfKeyTheme, value: valor);
+      await aplicarTemaPersonalizado();
+    } else {
+      await bind.mainSetLocalOption(key: kCommConfKeyTheme, value: valor);
+      carregarCores();
+      await changeDarkMode(themeModeFromString(valor));
+    }
+    await reloadAllWindows();
+  }
+
+  static Future<void> aplicarTemaPersonalizado() async {
+    carregarCores();
+    final modo = currentThemeMode();
+    Get.changeThemeMode(modo);
+    if (!isWeb) await bind.mainChangeTheme(dark: modo.toShortString());
+    updateSystemWindowTheme();
+  }
 
   // ListTile
   static const ListTileThemeData listTileTheme = ListTileThemeData(
@@ -369,7 +450,7 @@ class MyTheme {
     }),
   );
 
-  static ThemeData lightTheme = ThemeData(
+  static ThemeData _lightThemeVirtus() => ThemeData(
     // https://stackoverflow.com/questions/77537315/after-upgrading-to-flutter-3-16-the-app-bar-background-color-button-size-and
     useMaterial3: false,
     brightness: Brightness.light,
@@ -400,7 +481,7 @@ class MyTheme {
             ),
           )
         : null,
-    textTheme: const TextTheme(
+    textTheme: TextTheme(
         titleLarge: TextStyle(fontSize: 19, color: Colors.black87),
         titleSmall: TextStyle(fontSize: 14, color: Colors.black87),
         bodySmall: TextStyle(fontSize: 12, color: Colors.black87, height: 1.25),
@@ -468,7 +549,7 @@ class MyTheme {
       TabbarTheme.light,
     ],
   );
-  static ThemeData darkTheme = ThemeData(
+  static ThemeData _darkThemeVirtus() => ThemeData(
     useMaterial3: false,
     brightness: Brightness.dark,
     hoverColor: Color.fromARGB(255, 38, 38, 38),
@@ -498,7 +579,7 @@ class MyTheme {
             ),
           )
         : null,
-    textTheme: const TextTheme(
+    textTheme: TextTheme(
       titleLarge: TextStyle(fontSize: 19),
       titleSmall: TextStyle(fontSize: 14),
       bodySmall: TextStyle(fontSize: 12, height: 1.25),
@@ -577,6 +658,11 @@ class MyTheme {
   );
 
   static ThemeMode getThemeModePreference() {
+    if (isTemaPersonalizado()) {
+      return corEscura(corFundoPersonalizada())
+          ? ThemeMode.dark
+          : ThemeMode.light;
+    }
     return themeModeFromString(bind.mainGetLocalOption(key: kCommConfKeyTheme));
   }
 
@@ -928,7 +1014,7 @@ class OverlayDialogManager {
                                   style: flatButtonStyle,
                                   onPressed: cancel,
                                   child: Text(translate('Cancel'),
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                           color: MyTheme.accent)))))
                 ])),
         onCancel: showCancel ? cancel : null,

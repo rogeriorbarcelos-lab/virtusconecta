@@ -14,6 +14,7 @@ import 'package:flutter_hbb/common/widgets/keyboard_shortcuts/page_body.dart';
 import 'package:flutter_hbb/desktop/pages/desktop_keyboard_shortcuts_page.dart';
 import 'package:flutter_hbb/desktop/pages/desktop_tab_page.dart';
 import 'package:flutter_hbb/desktop/widgets/remote_toolbar.dart';
+import 'package:flutter_hbb/desktop/widgets/virtus_aparencia.dart';
 import 'package:flutter_hbb/mobile/widgets/dialog.dart';
 import 'package:flutter_hbb/models/platform_model.dart';
 import 'package:flutter_hbb/models/printer_model.dart';
@@ -39,7 +40,7 @@ const double _kRadioLeftMargin = 10;
 const double _kListViewBottomMargin = 15;
 const double _kTitleFontSize = 20;
 const double _kContentFontSize = 15;
-const Color _accentColor = MyTheme.accent;
+Color get _accentColor => MyTheme.accent;
 const String _kSettingPageControllerTag = 'settingPageController';
 const String _kSettingPageTabKeyTag = 'settingPageTabKey';
 
@@ -309,7 +310,7 @@ class _DesktopSettingPageState extends State<DesktopSettingPage>
     final settingsText = Text(
       translate('Settings'),
       textAlign: TextAlign.left,
-      style: const TextStyle(
+      style: TextStyle(
         color: _accentColor,
         fontSize: _kTitleFontSize,
         fontWeight: FontWeight.w400,
@@ -417,6 +418,7 @@ class _GeneralState extends State<_General> {
       children: [
         if (!isWeb) service(),
         theme(),
+        if (!isWeb) fundoTelaInicial(),
         _Card(title: 'Language', children: [language()]),
         if (!isWeb) hwcodec(),
         if (!isWeb) audio(context),
@@ -466,31 +468,43 @@ class _GeneralState extends State<_General> {
     });
   }
 
+  // VirtusConecta: "Padrao Virtus" (preto e dourado), "Claro" e "Personalizado".
   Widget theme() {
-    final current = MyTheme.getThemeModePreference().toShortString();
+    final bruto = bind.mainGetLocalOption(key: kCommConfKeyTheme);
+    final current = bruto == 'light' || bruto == MyTheme.temaPersonalizado
+        ? bruto
+        : 'dark';
     onChanged(String value) async {
-      await MyTheme.changeDarkMode(MyTheme.themeModeFromString(value));
+      await MyTheme.mudarTema(value);
       setState(() {});
     }
 
     final isOptFixed = isOptionFixed(kCommConfKeyTheme);
     return _Card(title: 'Theme', children: [
       _Radio<String>(context,
+          value: 'dark',
+          groupValue: current,
+          label: 'Padrão Virtus (preto e dourado)',
+          onChanged: isOptFixed ? null : onChanged),
+      _Radio<String>(context,
           value: 'light',
           groupValue: current,
           label: 'Light',
           onChanged: isOptFixed ? null : onChanged),
       _Radio<String>(context,
-          value: 'dark',
+          value: MyTheme.temaPersonalizado,
           groupValue: current,
-          label: 'Dark',
+          label: 'Personalizado',
           onChanged: isOptFixed ? null : onChanged),
-      _Radio<String>(context,
-          value: 'system',
-          groupValue: current,
-          label: 'Follow System',
-          onChanged: isOptFixed ? null : onChanged),
+      if (current == MyTheme.temaPersonalizado)
+        VirtusPaletaCores(aoMudar: () => setState(() {})),
     ]);
+  }
+
+  Widget fundoTelaInicial() {
+    return _Card(
+        title: 'Fundo da tela inicial',
+        children: [const VirtusEscolhaFundo()]);
   }
 
   Widget service() {

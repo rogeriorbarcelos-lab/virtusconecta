@@ -1971,13 +1971,28 @@ impl<T: InvokeUiSession> Session<T> {
 }
 
 #[tokio::main(flavor = "current_thread")]
+fn virtus_servidor_proprio() -> bool {
+    let s = Config::get_option("custom-rendezvous-server");
+    s.is_empty()
+        || hbb_common::config::RENDEZVOUS_SERVERS
+            .iter()
+            .any(|h| s == *h || s.starts_with(&format!("{h}:")))
+}
+
 pub async fn io_loop<T: InvokeUiSession>(handler: Session<T>, round: u32) {
     #[cfg(any(target_os = "android", target_os = "ios"))]
     let (sender, receiver) = mpsc::unbounded_channel::<Data>();
     #[cfg(not(any(target_os = "android", target_os = "ios")))]
     let (sender, mut receiver) = mpsc::unbounded_channel::<Data>();
     *handler.sender.write().unwrap() = Some(sender.clone());
-    let token = LocalConfig::get_option("access_token");
+    // VirtusConecta: o servidor de ID da Virtus (rustdesk-server aberto) nao usa o token de login
+    // nem faz a troca de chave que o envio do token exige; com o token, quem esta logado na conta
+    // nao conseguia conectar ("Failed to secure tcp: deadline has elapsed").
+    let token = if virtus_servidor_proprio() {
+        String::new()
+    } else {
+        LocalConfig::get_option("access_token")
+    };
     let key = crate::get_key(false).await;
     #[cfg(not(any(target_os = "android", target_os = "ios")))]
     if handler.is_port_forward() {

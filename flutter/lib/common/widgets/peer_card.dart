@@ -562,7 +562,7 @@ abstract class BasePeerCard extends StatelessWidget {
       (await _buildMenuItems(context))
           .map((e) => e.build(
               context,
-              const MenuConfig(
+              MenuConfig(
                   commonColor: CustomPopupMenuTheme.commonColor,
                   height: CustomPopupMenuTheme.height,
                   dividerHeight: CustomPopupMenuTheme.dividerHeight)))
