@@ -73,6 +73,17 @@ jobs:
         shell: bash
         run: python virtus/aplicar-marca.py
 
+      # Numero da versao: 1.<numero da compilacao>, com "-teste" no ramo testes.
+      # Vai para a tela inicial (flutter/lib/virtus_versao.dart) e para o nome do instalador.
+      - name: Numero da versao
+        shell: bash
+        run: |
+          VERSAO_VIRTUS="1.${{ github.run_number }}"
+          if [ "${{ github.ref_name }}" = "testes" ]; then VERSAO_VIRTUS="${VERSAO_VIRTUS}-teste"; fi
+          echo "VERSAO_VIRTUS=${VERSAO_VIRTUS}" >> "$GITHUB_ENV"
+          printf "// Gerado pela compilacao do GitHub.\nconst kVirtusVersao = '%s';\n" "$VERSAO_VIRTUS" > flutter/lib/virtus_versao.dart
+          cat flutter/lib/virtus_versao.dart
+
       - name: Restore bridge files
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
@@ -215,12 +226,12 @@ jobs:
           python3 ./generate.py -f ../../rustdesk/ -o . -e "../../rustdesk/${NOME}.exe"
           popd
           mkdir -p ./saida
-          mv ./target/release/rustdesk-portable-packer.exe "./saida/${NOME}-${VERSION}-x86_64.exe"
+          mv ./target/release/rustdesk-portable-packer.exe "./saida/${NOME}-${VERSAO_VIRTUS}.exe"
           sha256sum ./saida/*.exe | tee ./saida/SHA256.txt
 
       - name: Guardar o programa gerado
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: VirtusConecta-windows-x86_64
+          name: VirtusConecta-${{ env.VERSAO_VIRTUS }}
           path: ./saida
           if-no-files-found: error
