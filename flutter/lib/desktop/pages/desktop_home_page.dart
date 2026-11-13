@@ -25,6 +25,7 @@ import 'package:window_manager/window_manager.dart';
 import 'package:window_size/window_size.dart' as window_size;
 import '../widgets/button.dart';
 import '../widgets/virtus_aparencia.dart';
+import '../../virtus_versao.dart';
 
 class DesktopHomePage extends StatefulWidget {
   const DesktopHomePage({Key? key}) : super(key: key);
@@ -145,6 +146,20 @@ class _DesktopHomePageState extends State<DesktopHomePage>
                 ),
                 Expanded(child: Container())
               ],
+            ),
+            Positioned(
+              bottom: 8,
+              left: 0,
+              right: 0,
+              child: IgnorePointer(
+                child: Center(
+                  child: Text(
+                    'Versão $kVirtusVersao',
+                    style: TextStyle(
+                        fontSize: 11, color: Colors.grey.withOpacity(0.8)),
+                  ),
+                ),
+              ),
             ),
             if (isOutgoingOnly)
               Positioned(
