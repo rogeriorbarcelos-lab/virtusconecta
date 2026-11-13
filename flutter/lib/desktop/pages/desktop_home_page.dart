@@ -73,8 +73,10 @@ class _DesktopHomePageState extends State<DesktopHomePage>
   }
 
   Widget _buildBlock({required Widget child}) {
+    // VirtusConecta: quem esta conectado de fora pode usar a tela inicial
+    // (para conectar em outro PC a partir deste); Configuracoes seguem travadas.
     return buildRemoteBlock(
-        block: _block, mask: true, use: canBeBlocked, child: child);
+        block: _block, mask: true, use: () async => false, child: child);
   }
 
   Widget buildLeftPane(BuildContext context) {
