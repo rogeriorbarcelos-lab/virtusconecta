@@ -2524,8 +2524,12 @@ pub fn apply_virtus_defaults() {
     {
         let mut local = config::OVERWRITE_LOCAL_SETTINGS.write().unwrap();
         local.insert(keys::OPTION_LANGUAGE.to_owned(), "pt-br".to_owned());
-        local.insert("theme".to_owned(), "dark".to_owned());
     }
+    // Tema escuro so como padrao: o usuario pode trocar em Configuracoes > Geral > Tema.
+    config::DEFAULT_LOCAL_SETTINGS
+        .write()
+        .unwrap()
+        .insert("theme".to_owned(), "dark".to_owned());
     config::BUILTIN_SETTINGS
         .write()
         .unwrap()
