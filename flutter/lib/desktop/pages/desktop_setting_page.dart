@@ -15,6 +15,7 @@ import 'package:flutter_hbb/desktop/pages/desktop_keyboard_shortcuts_page.dart';
 import 'package:flutter_hbb/desktop/pages/desktop_tab_page.dart';
 import 'package:flutter_hbb/desktop/widgets/remote_toolbar.dart';
 import 'package:flutter_hbb/desktop/widgets/virtus_aparencia.dart';
+import 'package:flutter_hbb/models/virtus_ajuste_tela.dart';
 import 'package:flutter_hbb/mobile/widgets/dialog.dart';
 import 'package:flutter_hbb/models/platform_model.dart';
 import 'package:flutter_hbb/models/printer_model.dart';
@@ -2024,6 +2025,7 @@ class _DisplayState extends State<_Display> {
     final scrollController = ScrollController();
     return ListView(controller: scrollController, children: [
       viewStyle(context),
+      if (isDesktop) ajusteTela(context),
       scrollStyle(context),
       imageQuality(context),
       codec(context),
@@ -2052,6 +2054,17 @@ class _DisplayState extends State<_Display> {
           groupValue: groupValue,
           label: 'Scale adaptive',
           onChanged: isOptFixed ? null : onChanged),
+    ]);
+  }
+
+  Widget ajusteTela(BuildContext context) {
+    return _Card(title: 'Ajuste automático de tela', children: [
+      _OptionCheckBox(
+        context,
+        'Ajustar a resolução da outra máquina quando a tela dela for bem maior que a minha',
+        kOpcaoAjusteResolucao,
+        isServer: false,
+      ),
     ]);
   }
 
