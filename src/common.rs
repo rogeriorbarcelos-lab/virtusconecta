@@ -1296,6 +1296,13 @@ fn get_api_server_(api: String, custom: String) -> String {
     }
     let s0 = get_custom_rendezvous_server(custom);
     if !s0.is_empty() {
+        // VirtusConecta: o proprio servidor da Virtus so atende a API em https (porta 443).
+        if config::RENDEZVOUS_SERVERS
+            .iter()
+            .any(|h| s0 == *h || s0.starts_with(&format!("{h}:")))
+        {
+            return "https://conecta.virtusassessoria.com.br".to_owned();
+        }
         let s = crate::increase_port(&s0, -2);
         if s == s0 {
             let s = if hbb_common::is_ipv6_str(&s) && !s.starts_with('[') {
