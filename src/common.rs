@@ -2542,6 +2542,10 @@ pub fn apply_virtus_defaults() {
         let mut display = config::DEFAULT_DISPLAY_SETTINGS.write().unwrap();
         display.insert(keys::OPTION_VIEW_STYLE.to_owned(), "adaptive".to_owned());
         display.insert(keys::OPTION_IMAGE_QUALITY.to_owned(), "best".to_owned());
+        // Copiar e colar nos dois sentidos (texto, imagens e arquivos), ja com o que
+        // estiver copiado no momento em que a conexao abre.
+        display.insert(keys::OPTION_SYNC_INIT_CLIPBOARD.to_owned(), "Y".to_owned());
+        display.insert(keys::OPTION_ENABLE_FILE_COPY_PASTE.to_owned(), "Y".to_owned());
     }
 }
 
