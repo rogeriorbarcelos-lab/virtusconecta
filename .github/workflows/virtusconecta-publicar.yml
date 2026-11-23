@@ -1,0 +1,39 @@
+# VirtusConecta: publica como Release o instalador de uma compilacao ja feita,
+# para ter um link de download direto. Roda ao enviar o ramo "publicar-instalador";
+# RUN_ID abaixo e o numero da execucao (Actions) que gerou o instalador.
+name: VirtusConecta - Publicar instalador
+
+on:
+  push:
+    branches:
+      - publicar-instalador
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Id da compilacao
+        run: echo "RUN_ID=43983342928" >> "$GITHUB_ENV"
+
+      - name: Baixar o instalador da compilacao
+        uses: actions/download-artifact@v4
+        with:
+          run-id: ${{ env.RUN_ID }}
+          github-token: ${{ github.token }}
+          path: saida
+          merge-multiple: true
+
+      - name: Criar a Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          ls -la saida
+          EXE=$(ls saida/VirtusConecta-*.exe | head -1)
+          VERSAO=$(basename "$EXE" .exe | sed 's/^VirtusConecta-//')
+          gh release create "instalador-$VERSAO" saida/VirtusConecta-*.exe saida/SHA256.txt \
+            --repo "$GITHUB_REPOSITORY" --title "VirtusConecta $VERSAO" \
+            --target "$GITHUB_SHA" --notes "Instalador da compilacao $RUN_ID."
